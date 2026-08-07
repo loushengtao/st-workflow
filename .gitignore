@@ -1,0 +1,7 @@
+.DS_Store
+node_modules/
+__pycache__/
+*.pyc
+# 渲染器为按需生成的本地产物，不入库
+renderer/
+output/
