@@ -1,12 +1,12 @@
-# Leva Skills — 好用的 Agent Skill 工作流合集
+# st-workflow — 圣韬同学的好用 Agent Skill 工作流合集
 
-由 [杭州利未智能科技有限公司（Leva）](https://github.com/loushengtao) 维护的 **Claude Code / Agent Skill 工作流分享仓库**。
+由 **圣韬同学**（[@loushengtao](https://github.com/loushengtao)）维护的 **Claude Code / Agent Skill 工作流分享仓库**。
 
 ## 这是什么
 
 Skill 是给 AI Agent（如 Claude Code）用的"工作流说明书"：一个文件夹里装着一份 `SKILL.md`（告诉 Agent 该怎么一步步干活）加上配套的脚本和模板。装好之后，你对 Agent 说一句话（比如"帮我剪一下这条口播"），它就会按照 skill 里沉淀好的完整流程自动执行——而不是每次都从零发挥。
 
-这个仓库收录我们在实际业务中打磨出来、验证过的 skill，每一个都做到**开箱即用**：依赖交代清楚、流程写成步骤、坑都提前标好。
+这个仓库收录我在实际业务中打磨出来、验证过的 skill，每一个都做到**开箱即用**：依赖交代清楚、流程写成步骤、坑都提前标好。
 
 ## 有什么用
 
@@ -19,13 +19,13 @@ Skill 是给 AI Agent（如 Claude Code）用的"工作流说明书"：一个文
 1. 克隆本仓库：
 
 ```bash
-git clone https://github.com/loushengtao/leva-skills.git
+git clone https://github.com/loushengtao/st-workflow.git
 ```
 
 2. 把想用的 skill 复制到 Claude Code 的用户级 skill 目录：
 
 ```bash
-cp -R leva-skills/skills/koubo-edit ~/.claude/skills/
+cp -R st-workflow/skills/koubo-edit ~/.claude/skills/
 ```
 
 3. 在 Claude Code 里直接说需求（如"剪一下这条口播"），或用斜杠命令 `/koubo-edit` 显式调用。
@@ -43,7 +43,7 @@ cp -R leva-skills/skills/koubo-edit ~/.claude/skills/
 ## 仓库结构
 
 ```
-leva-skills/
+st-workflow/
 ├── README.md
 └── skills/
     └── <skill-name>/
