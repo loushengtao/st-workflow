@@ -51,7 +51,7 @@ cp -R st-workflow/skills/koubo-edit ~/.claude/skills/   # 以 Claude Code 为例
 
 | Skill | 一句话说明 | 主要依赖 |
 |---|---|---|
-| [koubo-edit](skills/koubo-edit/) | 中文口播视频自动剪辑：本机 Whisper 转写 → AI 导演做视觉设计（胶囊字幕、侧方大字、白板讲解卡、AI 配图物料）→ Remotion 渲染成片，三阶段流程（分析确认 → 渲染 → 微调），全程本机 | uv、Node.js ≥ 18（Apple Silicon Mac） |
+| [koubo-edit](skills/koubo-edit/) | 中文口播视频自动剪辑：本机 Whisper 转写 → AI 导演做视觉设计（胶囊字幕、侧方大字、白板讲解卡、AI 配图物料）→ Remotion 渲染成片，三阶段流程（分析确认 → 渲染 → 微调），全程本机 | uv、Node.js ≥ 18（macOS / Windows / Linux 全平台，转写后端自动适配） |
 
 *持续更新中，后续会陆续放入更多经过实战验证的 skill。*
 
