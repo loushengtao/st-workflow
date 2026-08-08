@@ -29,12 +29,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
 import tempfile
 import wave
 from pathlib import Path
+
+# 模型托管在 Hugging Face；国内无外网环境直连不通，默认走 hf-mirror 国内镜像
+# （已设 HF_ENDPOINT 则尊重用户配置；离线模型包用 --model <本地目录> 可完全不联网）。
+os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
 
 INITIAL_PROMPT = "以下是普通话中文短视频口播，请使用简体中文准确转写产品名、数字和关键词。"
 
@@ -151,7 +156,8 @@ def main() -> None:
     parser.add_argument("-o", "--out", type=Path, required=True)
     parser.add_argument("--model", default="small",
                         help="通用模型名（tiny/small/medium/large-v3-turbo），"
-                             "识别不准时可换 large-v3-turbo；两个后端自动映射")
+                             "识别不准时可换 large-v3-turbo；两个后端自动映射；"
+                             "也可传离线模型包解压后的本地目录，完全不联网")
     parser.add_argument("--backend", default="auto", choices=["auto", "mlx", "faster"],
                         help="auto=Apple Silicon 用 MLX，其余平台用 faster-whisper")
     args = parser.parse_args()

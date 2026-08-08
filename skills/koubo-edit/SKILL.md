@@ -57,7 +57,12 @@ which uv node npm
 uv run --with static-ffmpeg python -c "from static_ffmpeg import run; print(run.get_or_fetch_platform_executables_else_raise()[0])"
 ```
 
-**网络慢**：PyPI 直连慢时 `export UV_DEFAULT_INDEX=https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple`；npm 镜像见「故障排查」。
+**无外网 / 网络慢（国内环境）**：全链路都有国内通道，无需任何翻墙——
+
+- Python 包：`export UV_DEFAULT_INDEX=https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple`
+- npm 与无头浏览器：npmmirror，见「故障排查」
+- Whisper 模型：脚本已**默认走 hf-mirror.com 国内镜像**（设过 `HF_ENDPOINT` 则尊重用户配置），首次转写自动下载（small 约 460MB）
+- 连镜像都访问不了的机器：用**离线模型包**（百度网盘分发，内含 faster-whisper-small 模型目录），解压后转写时加 `--model <解压目录>` 即可完全不联网，如 `--model D:\models\faster-whisper-small`
 
 ### 1. 收集输入
 
