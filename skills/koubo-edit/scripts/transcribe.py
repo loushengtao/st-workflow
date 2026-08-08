@@ -131,6 +131,10 @@ def transcribe_faster(wav: Path, model: str) -> dict:
     from faster_whisper import WhisperModel
 
     name = model.removeprefix("mlx-community/whisper-").removesuffix("-mlx")
+    # 离线优先：skill 自带 models/faster-whisper-<name>/ 时直接用，完全不联网
+    bundled = Path(__file__).resolve().parent.parent / "models" / f"faster-whisper-{name}"
+    if bundled.is_dir():
+        name = str(bundled)
     engine = WhisperModel(name, device="cpu", compute_type="int8")
     seg_iter, _info = engine.transcribe(
         str(wav), language="zh", task="transcribe",

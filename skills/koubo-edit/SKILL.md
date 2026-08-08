@@ -61,8 +61,8 @@ uv run --with static-ffmpeg python -c "from static_ffmpeg import run; print(run.
 
 - Python 包：`export UV_DEFAULT_INDEX=https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple`
 - npm 与无头浏览器：npmmirror，见「故障排查」
-- Whisper 模型：脚本已**默认走 hf-mirror.com 国内镜像**（设过 `HF_ENDPOINT` 则尊重用户配置），首次转写自动下载（small 约 460MB）
-- 连镜像都访问不了的机器：用**离线模型包**（百度网盘分发，内含 faster-whisper-small 模型目录），解压后转写时加 `--model <解压目录>` 即可完全不联网，如 `--model D:\models\faster-whisper-small`
+- Whisper 模型三级兜底，按顺序自动生效：① skill 目录下存在 `models/faster-whisper-small/`（百度网盘分发的完整离线版自带）时**直接用本地模型，零联网**；② 否则从 **hf-mirror.com 国内镜像**自动下载（脚本默认，设过 `HF_ENDPOINT` 则尊重用户配置，small 约 460MB）；③ 也可显式 `--model <任意本地模型目录>`
+- GitHub 版仓库不含模型（超出 GitHub 文件大小限制），从 GitHub 装的用户走镜像自动下载即可；完全无网环境用网盘完整版
 
 ### 1. 收集输入
 

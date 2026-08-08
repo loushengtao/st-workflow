@@ -5,3 +5,5 @@ __pycache__/
 # 渲染器为按需生成的本地产物，不入库
 renderer/
 output/
+# whisper 模型（464MB，超 GitHub 限制，走网盘完整版分发）
+models/
