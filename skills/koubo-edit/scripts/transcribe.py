@@ -64,10 +64,10 @@ def ffmpeg_paths() -> tuple[str, str]:
 
 def probe(path: Path) -> dict:
     _ffmpeg, ffprobe = ffmpeg_paths()
+    # -show_streams 全量拿流信息：手机竖拍的旋转标记在 stream 的 side_data_list 里，
+    # 用 -show_entries 白名单会把它漏掉，导致竖屏视频被当成横屏。
     proc = subprocess.run(
-        [ffprobe, "-v", "error", "-show_entries",
-         "format=duration:stream=codec_type,width,height,avg_frame_rate",
-         "-of", "json", str(path)],
+        [ffprobe, "-v", "error", "-show_streams", "-show_format", "-of", "json", str(path)],
         capture_output=True, text=True, timeout=40,
     )
     payload = json.loads(proc.stdout or "{}")
@@ -81,10 +81,29 @@ def probe(path: Path) -> dict:
         fps = 30.0
     if not video or duration <= 0:
         sys.exit("错误：读不到视频画面或时长，请确认是正常的 MP4/MOV/WebM 文件")
+
+    width, height = int(video.get("width") or 0), int(video.get("height") or 0)
+    # 手机竖拍视频常按横向存储 + 旋转元数据，播放端才转正；
+    # 按显示方向换算画幅，否则成片会横竖颠倒。
+    rotation = 0
+    for side_data in video.get("side_data_list") or []:
+        if isinstance(side_data, dict) and side_data.get("rotation") is not None:
+            try:
+                rotation = int(round(float(side_data["rotation"])))
+            except (TypeError, ValueError):
+                pass
+    try:
+        rotation = int(round(float((video.get("tags") or {}).get("rotate") or rotation)))
+    except (TypeError, ValueError):
+        pass
+    if abs(rotation) % 180 == 90:
+        width, height = height, width
+
     return {
         "duration_ms": int(duration * 1000),
-        "width": int(video.get("width") or 0),
-        "height": int(video.get("height") or 0),
+        "width": width,
+        "height": height,
+        "rotation": rotation,
         "fps": fps,
     }
 

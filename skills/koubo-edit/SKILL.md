@@ -76,6 +76,8 @@ uv run ~/.claude/skills/koubo-edit/scripts/transcribe.py <口播视频> -o outpu
 
 产出逐句 `segments` + 词级 `words` + 画幅元数据。识别不准加 `--model large-v3-turbo`（通用模型名，MLX / faster-whisper 两个后端自动映射）。Apple Silicon 走 MLX，Windows / Linux / Intel Mac 自动降级 faster-whisper，无需关心。
 
+`metadata` 里的 `width/height` **已按显示方向换算**（手机竖拍视频常按横向存储 + 旋转元数据 `rotation`，播放端才转正；脚本读了 stream 的 side_data 做了换算）——plan 直接用这两个值，竖屏进就竖屏出，别再自己去 ffprobe 裸取 stream 宽高（那是存储方向，会把竖屏做成横屏）。
+
 ### 3. 当导演：通读文稿做视觉设计
 
 读 transcript.json，先在心里把整条片**分成 2-5 个内容段**（钩子/痛点/方案/演示/行动号召……），再逐段决定视觉：哪里全屏讲、哪里切演示、哪里上概念卡、哪里需要一张图、哪几句配侧方大字。目标密度：**每 5-10 秒画面上要有一次新的视觉事件**（一页字幕不算事件）。写出 plan（字段定义见 [src/plan.ts](assets/remotion-template/src/plan.ts)）：
@@ -168,7 +170,7 @@ cd "$R" && npx tsc --noEmit && npx remotion render Main "<当前项目绝对路�
 
 ### 7. 自检后交付
 
-渲染完抽 3-4 帧亲眼确认（每种用到的场景各一帧 + 一帧侧方大字），用 Read 查看：字幕不越界、大字块不压脸、演示卡完整、配图清晰、角标位置正确。ffprobe 核对时长。有问题改 plan 重渲；没问题交付（有 SendUserFile 直接发送）。
+渲染完抽 3-4 帧亲眼确认（每种用到的场景各一帧 + 一帧侧方大字），用 Read 查看：字幕不越界、大字块不压脸、演示卡完整、配图清晰、角标位置正确、**横竖方向与源视频在手机里看到的一致（竖屏进必须竖屏出，人是正的）**。ffprobe 核对时长。有问题改 plan 重渲；没问题交付（有 SendUserFile 直接发送）。
 
 ### 8. 微调迭代
 
@@ -208,6 +210,7 @@ cd "$R" && npx tsc --noEmit && npx remotion render Main "<当前项目绝对路�
 ## 故障排查
 
 - 转写环节在下载 torch / llvmlite 等大包：装错方案了，本 skill 不用 PyTorch。停掉，改用 `uv run $SKILL_DIR/scripts/transcribe.py`（依赖见「0. 环境与依赖」）
+- **竖屏源被剪成了横屏**：plan 的画幅没用 transcribe 输出的 `metadata.width/height`（它已按旋转元数据换算显示方向），而是裸拿了 ffprobe 的存储宽高。重写 plan 画幅重渲即可。若个别文件方向仍不对（旋转标记异常），重编码把方向烘焙进画面再喂：`ffmpeg -i in.mp4 -c:v libx264 -crf 18 -preset fast -c:a copy out.mp4`（Remotion 渲染本身会正确应用旋转元数据，通常无需烘焙）
 - `npm install` 卡住/失败：`npm install --registry=https://registry.npmmirror.com`
 - 首次渲染卡在下载无头浏览器（Google CDN 国内极慢）：从 npmmirror 手动装。版本号看 `node_modules/@remotion/renderer/dist` 里的 `TESTED_VERSION`（`grep -rho "TESTED_VERSION = '[^']*'" ...`）：
 
